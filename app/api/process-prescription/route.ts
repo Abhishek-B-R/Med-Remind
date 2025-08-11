@@ -11,6 +11,7 @@ const medicineSchema = z.object({
       nameOfMedicine: z.string(),
       noOfTablets: z.number(),
       whenToTake: z.array(z.number()).length(3), // [morning, afternoon, evening] as 1 or 0
+      notes: z.string().optional(), // Added notes field
     }),
   ),
 })
@@ -64,7 +65,8 @@ export async function POST(request: NextRequest) {
           - Calculate total based on frequency and duration
           
           Be conservative with dosing - if unclear, default to once daily morning.
-          If you can't determine the exact number of tablets, make a reasonable estimate based on typical prescriptions.`,
+          If you can't determine the exact number of tablets, make a reasonable estimate based on typical prescriptions.
+          Also extract any specific notes or side effects mentioned for each medicine.`,
         },
         {
           role: "user",
@@ -78,7 +80,8 @@ export async function POST(request: NextRequest) {
               Please provide the medicine details in the specified JSON format. Focus on:
               1. Medicine names (generic or brand names)
               2. Total number of tablets/capsules prescribed
-              3. Frequency of administration (morning, afternoon, evening)`,
+              3. Frequency of administration (morning, afternoon, evening)
+              4. Any specific notes or side effects.`,
             },
             {
               type: "image",
