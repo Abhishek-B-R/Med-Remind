@@ -3,6 +3,7 @@ import { openai } from "@ai-sdk/openai"
 import { generateObject } from "ai"
 import { z } from "zod"
 import { getServerSession } from "next-auth"
+import { authOptions } from "../auth/[...nextauth]/route"
 
 const medicineSchema = z.object({
   medicines: z.array(
@@ -16,7 +17,7 @@ const medicineSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
