@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Navigation } from '@/components/navigation'
 import { Providers } from '@/components/providers'
-import { ThemeProvider } from '@/components/theme-provider' // Import ThemeProvider
 import { AppToaster } from '@/components/ui/toaster' // Import Toaster
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,18 +18,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={inter.className}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <Providers>
-                        <Navigation />
-                        {children}
-                        <AppToaster />
-                    </Providers>
-                </ThemeProvider>
+                <Providers>
+                    <Navigation />
+                    {children}
+                    <AppToaster />
+                </Providers>
             </body>
         </html>
     )

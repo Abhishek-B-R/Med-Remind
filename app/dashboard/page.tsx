@@ -311,16 +311,26 @@ export default function Dashboard() {
                   <SelectContent className="dark:bg-gray-900">
                     <SelectItem value="eng">English</SelectItem>
                     <SelectItem value="hin">Hindi</SelectItem>
+                    <SelectItem value="spa">Spanish</SelectItem>
+                    <SelectItem value="fra">French</SelectItem> 
+                    <SelectItem value="deu">German</SelectItem>
+                    <SelectItem value="ita">Italian</SelectItem>
+                    <SelectItem value="por">Portuguese</SelectItem>
+                    <SelectItem value="rus">Russian</SelectItem>
+                    <SelectItem value="ara">Arabic</SelectItem>
+                    <SelectItem value="chi_sim">Chinese (Simplified)</SelectItem>
+                    <SelectItem value="chi_tra">Chinese (Traditional)</SelectItem>
+                    <SelectItem value="jpn">Japanese</SelectItem>
+                    <SelectItem value="kor">Korean</SelectItem>
+                    <SelectItem value="kan">Kannada</SelectItem>
                     <SelectItem value="tam">Tamil</SelectItem>
                     <SelectItem value="tel">Telugu</SelectItem>
-                    <SelectItem value="kan">Kannada</SelectItem>
                     <SelectItem value="mal">Malayalam</SelectItem>
                     <SelectItem value="guj">Gujarati</SelectItem>
                     <SelectItem value="mar">Marathi</SelectItem>
                     <SelectItem value="ben">Bengali</SelectItem>
                     <SelectItem value="pan">Punjabi</SelectItem>
                     <SelectItem value="urd">Urdu</SelectItem>
-                    {/* Add more languages as needed and supported by Tesseract.js */}
                   </SelectContent>
                 </Select>
               </div>

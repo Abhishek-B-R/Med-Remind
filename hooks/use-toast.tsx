@@ -1,9 +1,7 @@
-"use client"
-
+// "use client"
 import * as React from "react"
 
 const TOAST_LIMIT = 1
-// const TOAST_REMOVE_DELAY = 1000 // ms before actually removing after dismiss
 
 type ToasterToast = {
   id: string
@@ -99,6 +97,8 @@ function toast(opts: Omit<ToasterToast, "id">) {
   dispatch({
     type: actionTypes.ADD_TOAST,
     toast: {
+      // default duration 5000ms (5s)
+      duration: 3000,
       ...opts,
       id,
       open: true,
@@ -109,6 +109,11 @@ function toast(opts: Omit<ToasterToast, "id">) {
   })
 
   return { id, dismiss, update }
+}
+
+// expose remove so UI can actually remove the toast from memoryState
+function remove(toastId?: string) {
+  dispatch({ type: actionTypes.REMOVE_TOAST, toastId })
 }
 
 function useToast() {
@@ -125,8 +130,8 @@ function useToast() {
   return {
     ...state,
     toast,
-    dismiss: (toastId?: string) =>
-      dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
+    dismiss: (toastId?: string) => dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
+    remove,
   }
 }
 
