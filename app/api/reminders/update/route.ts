@@ -28,9 +28,11 @@ export async function POST(request: NextRequest) {
     }
     const originalEvent = await eventResponse.json()
 
+    const normalizedId = reminderId.split("_")[0]
+
     // Update status in our database
     const updatedDbReminder = await prisma.reminder.update({
-      where: { googleEventId: reminderId },
+      where: { googleEventId: normalizedId },
       data: {
         status: status,
         actualTakenTime: status === "taken" ? new Date() : null,

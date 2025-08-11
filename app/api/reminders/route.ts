@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth"
 import prisma from "@/lib/prisma"
 import { authOptions } from "../auth/[...nextauth]/route"
 
-
 interface GoogleCalendarEvent {
   id: string;
   summary?: string;
@@ -19,11 +18,12 @@ interface GoogleCalendarEvent {
     };
   };
 }
+
 interface DbReminder {
   googleEventId: string;
   status: string;
   medicine?: {
-    notes?: string;
+    notes?: string | null;
   };
 }
 
@@ -55,15 +55,17 @@ export async function GET() {
     }
 
     const data = await response.json()
-
     const googleEvents = data.items || []
 
-    // Fetch corresponding reminder statuses from our database
-    const googleEventIds = googleEvents.map((event: GoogleCalendarEvent) => event.id)
+    // **FIX: Normalize Google Calendar event IDs to match database**
+    const normalizedEventIds = googleEvents.map((event: GoogleCalendarEvent) => 
+      event.id.split("_")[0] // Remove recurring event suffix
+    )
+
     const dbReminders = await prisma.reminder.findMany({
       where: {
         googleEventId: {
-          in: googleEventIds,
+          in: normalizedEventIds,
         },
       },
       include: {
@@ -71,17 +73,26 @@ export async function GET() {
       },
     })
 
-    const remindersMap = new Map(dbReminders.map((r: DbReminder) => [r.googleEventId, r]))
+    // **FIX: Create map using normalized IDs**
+    const remindersMap = new Map(
+      dbReminders.map((r: DbReminder) => [r.googleEventId, r])
+    )
 
     // Transform calendar events to reminder format, using DB status
-    const reminders = googleEvents.map((event: GoogleCalendarEvent) => {
-      const dbReminder = remindersMap.get(event.id) as DbReminder | undefined
+    const allReminders = googleEvents.map((event: GoogleCalendarEvent) => {
+      const normalizedEventId = event.id.split("_")[0] // Normalize here too
+      const dbReminder = remindersMap.get(normalizedEventId) as DbReminder | undefined
+      
       const medicineName =
-        event.extendedProperties?.private?.medicineName || event.summary?.replace("Take ", "") || "Unknown Medicine"
-      const notes = event.extendedProperties?.private?.notes || dbReminder?.medicine?.notes || ""
+        event.extendedProperties?.private?.medicineName || 
+        event.summary?.replace("Take ", "") || 
+        "Unknown Medicine"
+      
+      const notes = event.extendedProperties?.private?.notes || 
+        dbReminder?.medicine?.notes || ""
 
       return {
-        id: event.id,
+        id: event.id, // Keep original ID for frontend operations
         medicine: medicineName,
         time: new Date(event.start.dateTime).toLocaleTimeString("en-US", {
           hour: "2-digit",
@@ -94,9 +105,29 @@ export async function GET() {
       }
     })
 
-    return NextResponse.json({ reminders })
+    // **Filter out completed reminders for current reminders endpoint**
+    interface Reminder {
+      id: string;
+      medicine: string;
+      time: string;
+      date: string;
+      status: string;
+      description?: string;
+      notes: string;
+    }
+
+    const activeReminders = allReminders.filter((reminder: Reminder) => 
+      reminder.status === "pending" || reminder.status === "scheduled"
+    );
+
+    console.log(`Total events: ${allReminders.length}, Active: ${activeReminders.length}`)
+    console.log("Reminder statuses:", allReminders.map((r: Reminder) => `${r.medicine}: ${r.status}`))
+
+    return NextResponse.json({ reminders: activeReminders })
   } catch (error) {
     console.error("Error fetching reminders:", error)
-    return NextResponse.json({ error: (error as Error).message || "Failed to fetch reminders" }, { status: 500 })
+    return NextResponse.json({ 
+      error: (error as Error).message || "Failed to fetch reminders" 
+    }, { status: 500 })
   }
 }

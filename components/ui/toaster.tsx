@@ -1,4 +1,3 @@
-// components/ui/toaster.tsx
 "use client"
 
 import { Toaster } from "sonner"
@@ -6,7 +5,7 @@ import { Toaster } from "sonner"
 export function AppToaster() {
   return (
     <Toaster
-      position="top-right"
+      position="bottom-right"
       richColors
       closeButton
       toastOptions={{

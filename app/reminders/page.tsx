@@ -9,6 +9,17 @@ import { Badge } from "@/components/ui/badge"
 import { CheckCircle, XCircle, Clock, Loader2, History, Share2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 
 interface Reminder {
   id: string
@@ -41,6 +52,11 @@ export default function RemindersPage() {
   const [updating, setUpdating] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<"current" | "history">("current")
 
+  const [showCustomSnoozeDialog, setShowCustomSnoozeDialog] = useState(false)
+  const [currentReminderIdForSnooze, setCurrentReminderIdForSnooze] = useState<string | null>(null)
+  const [customSnoozeValue, setCustomSnoozeValue] = useState("30")
+  const [customSnoozeUnit, setCustomSnoozeUnit] = useState<"minutes" | "hours" | "days">("minutes")
+
   useEffect(() => {
     if (status === "loading") return
     if (!session) {
@@ -49,6 +65,7 @@ export default function RemindersPage() {
     }
     fetchReminders()
     fetchHistory()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, status, router])
 
   const fetchReminders = async () => {
@@ -137,6 +154,48 @@ export default function RemindersPage() {
     }
   }
 
+  const handleCustomSnoozeClick = (reminderId: string) => {
+    setCurrentReminderIdForSnooze(reminderId)
+    setShowCustomSnoozeDialog(true)
+    setCustomSnoozeValue("30") // Reset to default
+    setCustomSnoozeUnit("minutes") // Reset to default
+  }
+
+  const handleCustomSnoozeSubmit = async () => {
+    if (!currentReminderIdForSnooze) return
+
+    const value = Number.parseInt(customSnoozeValue)
+    if (Number.isNaN(value) || value <= 0) {
+      toast({
+        title: "Invalid Input",
+        description: "Please enter a valid positive number for snooze duration.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    let snoozeString: string
+    if (customSnoozeUnit === "minutes") {
+      snoozeString = `${value}min`
+    } else if (customSnoozeUnit === "hours") {
+      snoozeString = `${value}hr`
+    } else {
+      // For days, we'll just send "tomorrow" if 1 day, otherwise a generic "custom"
+      // The backend currently defaults to 2hr if it doesn't recognize the string.
+      // For more precise day-based snoozing, the backend API would need to be extended.
+      snoozeString = value === 1 ? "tomorrow" : "custom" // Backend will default "custom" to 2hr
+      toast({
+        title: "Note on Days Snooze",
+        description: "Day-based snooze currently defaults to rescheduling 2 hours later if not 'tomorrow'.",
+        variant: "default",
+      })
+    }
+
+    await updateReminderStatus(currentReminderIdForSnooze, "missed", snoozeString)
+    setShowCustomSnoozeDialog(false)
+    setCurrentReminderIdForSnooze(null)
+  }
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "taken":
@@ -173,7 +232,7 @@ export default function RemindersPage() {
       Time: entry.time,
       Status: entry.status,
       Notes: entry.notes || "N/A",
-      ActualTakenTime: entry.actualTakenTime ? new Date(entry.actualTakenTime).toLocaleString() : "N/A",
+      Actual_Updated_Time: entry.actualTakenTime ? new Date(entry.actualTakenTime).toLocaleString() : "N/A",
     }))
 
     if (data.length === 0) {
@@ -325,8 +384,8 @@ export default function RemindersPage() {
                             <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "tomorrow")}>
                               Snooze until tomorrow
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "2hr")}>
-                              Mark as Missed (Reschedule 2 hours later)
+                            <DropdownMenuItem onClick={() => handleCustomSnoozeClick(reminder.id)}>
+                              Custom Snooze...
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -387,6 +446,54 @@ export default function RemindersPage() {
           </div>
         )}
       </div>
+
+      {/* Custom Snooze Dialog */}
+      <Dialog open={showCustomSnoozeDialog} onOpenChange={setShowCustomSnoozeDialog}>
+        <DialogContent className="sm:max-w-[425px] dark:bg-gray-900">
+          <DialogHeader>
+            <DialogTitle>Custom Snooze</DialogTitle>
+            <DialogDescription>Set a custom duration to reschedule this reminder.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="snooze-value" className="text-right">
+                Snooze for
+              </Label>
+              <Input
+                id="snooze-value"
+                type="number"
+                value={customSnoozeValue}
+                onChange={(e) => setCustomSnoozeValue(e.target.value)}
+                className="col-span-2 dark:bg-gray-950 dark:border-gray-700"
+                min="1"
+              />
+              <Select
+                value={customSnoozeUnit}
+                onValueChange={(value: "minutes" | "hours" | "days") => setCustomSnoozeUnit(value)}
+              >
+                <SelectTrigger className="dark:bg-gray-950 dark:border-gray-700">
+                  <SelectValue placeholder="Unit" />
+                </SelectTrigger>
+                <SelectContent className="dark:bg-gray-900">
+                  <SelectItem value="minutes">Minutes</SelectItem>
+                  <SelectItem value="hours">Hours</SelectItem>
+                  <SelectItem value="days">Days</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowCustomSnoozeDialog(false)}
+              className="dark:bg-gray-800 dark:hover:bg-gray-700"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleCustomSnoozeSubmit}>Snooze</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
