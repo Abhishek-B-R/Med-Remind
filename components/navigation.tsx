@@ -20,10 +20,6 @@ export function Navigation() {
     { href: "/settings", label: "Settings", icon: Settings },
   ]
 
-  if (pathname === "/" || pathname === "/auth/signin") {
-    return null
-  }
-
   return (
     <nav className="bg-white shadow-sm border-b dark:bg-gray-950 dark:border-gray-800">
       <div className="container mx-auto px-4">
@@ -89,7 +85,6 @@ export function Navigation() {
               </div>
             )}
 
-            {/* Theme toggle */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -107,7 +102,7 @@ export function Navigation() {
 
             {session && (
               <>
-                <span className="hidden md:inline text-sm text-gray-600 dark:text-gray-300">
+                <span className={`hidden text-sm font-bold text-gray-600 dark:text-gray-300 ${session.user?.name && "md:inline"}`}>
                   Hello, {session.user?.name}
                 </span>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>

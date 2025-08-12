@@ -328,17 +328,17 @@ export default function RemindersPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:block text-xs px-3 py-2 rounded bg-white dark:bg-gray-800 shadow">
+            <div className={`text-xs px-3 py-2 rounded bg-white dark:bg-gray-800 shadow hidden ${session?.user?.email && 'sm:block'}`}>
               Logged in as <span className="font-medium ml-2">{session?.user?.email}</span>
             </div>
             <Button
               onClick={() => router.push('/dashboard')}
               variant="outline"
-              className="hidden sm:inline-flex"
+              className="hidden sm:inline-flex cursor-pointer"
             >
               Upload Prescription
             </Button>
-            <Button onClick={exportHistory} disabled={history.length === 0} className="inline-flex">
+            <Button onClick={exportHistory} disabled={history.length === 0} className="inline-flex cursor-pointer">
               <Share2 className="w-4 h-4 mr-2" /> Export
             </Button>
           </div>
@@ -385,7 +385,7 @@ export default function RemindersPage() {
                         <Button
                           size="sm"
                           onClick={() => updateReminderStatus(reminder.id, 'taken')}
-                          className="flex-1 dark:bg-gray-900 dark:hover:bg-gray-700 bg-blue-600 hover:bg-blue-700 text-white"
+                          className="flex-1 dark:bg-blue-800 dark:hover:bg-gray-700 bg-blue-600 hover:bg-blue-700 text-white"
                           disabled={updating === reminder.id}
                         >
                           {updating === reminder.id ? (

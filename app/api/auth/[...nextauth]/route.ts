@@ -5,12 +5,16 @@ import prisma from '@/lib/prisma'
 import type { DefaultSession } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import type { PrismaClient as DefaultPrismaClient } from '@prisma/client'
+
 declare module 'next-auth' {
   interface Session {
     accessToken?: string
     refreshToken?: string
     user: {
       id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
     } & DefaultSession['user']
   }
 }
@@ -21,6 +25,9 @@ declare module 'next-auth/jwt' {
     refreshToken?: string
     accessTokenExpires?: number
     id?: string
+    name?: string | null
+    email?: string | null
+    image?: string | null
   }
 }
 
@@ -75,10 +82,14 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user, profile }) {
       if (account && user) {
         return {
+          ...token,
           id: user.id,
+          name: user.name ?? profile?.name ?? null,
+          email: user.email ?? profile?.email ?? null,
+          image: user.image ?? profile?.image ?? null,
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
           accessTokenExpires:
@@ -94,6 +105,9 @@ export const authOptions: AuthOptions = {
 
     async session({ session, token }) {
       session.user.id = token.id as string
+      session.user.name = token.name ?? null
+      session.user.email = token.email ?? null
+      session.user.image = token.image ?? null
       session.accessToken = token.accessToken
       session.refreshToken = token.refreshToken
       return session

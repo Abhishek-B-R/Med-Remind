@@ -54,7 +54,7 @@ export default function SignInPage() {
           <CardContent className="pt-6 pb-8">
             <Button
               onClick={handleGoogleSignIn}
-              className="w-full bg-gradient-to-br from-blue-600 to-[#090979] hover:from-blue-700 hover:to-purple-700 text-white"
+              className="w-full bg-gradient-to-br from-blue-600 to-[#090979] hover:from-blue-700 hover:to-[#3030d0] text-white"
               size="lg"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" aria-hidden>

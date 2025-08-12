@@ -16,7 +16,7 @@ export default function SettingsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { toast } = useToast()
-
+  console.log(session)
   const [preferences, setPreferences] = useState<UserPreferences>({
     morningTime: "08:00",
     afternoonTime: "13:00",
@@ -261,7 +261,7 @@ export default function SettingsPage() {
         </div>
 
         <div className="mt-8 text-right">
-          <Button onClick={handleSavePreferences} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Button onClick={handleSavePreferences} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer">
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...

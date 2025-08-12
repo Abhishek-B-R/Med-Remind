@@ -17,6 +17,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="icon"
+          href="https://i.imghippo.com/files/sql9599OoU.jpeg"
+        />
+      </head>
       <body className={inter.className}>
         <Providers>
           <Navigation />
