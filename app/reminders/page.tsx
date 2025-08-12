@@ -65,7 +65,7 @@ export default function RemindersPage() {
     }
     fetchReminders()
     fetchHistory()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, status, router])
 
   const fetchReminders = async () => {
@@ -96,7 +96,7 @@ export default function RemindersPage() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch("/api/history") // New API route for history
+      const response = await fetch("/api/history")
       if (response.ok) {
         const data = await response.json()
         setHistory(data.history || [])
@@ -139,8 +139,8 @@ export default function RemindersPage() {
         title: "Reminder Updated!",
         description: result.message,
       })
-      fetchReminders() // Re-fetch current reminders
-      fetchHistory() // Re-fetch history
+      fetchReminders()
+      fetchHistory()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error updating reminder:", error)
@@ -157,8 +157,8 @@ export default function RemindersPage() {
   const handleCustomSnoozeClick = (reminderId: string) => {
     setCurrentReminderIdForSnooze(reminderId)
     setShowCustomSnoozeDialog(true)
-    setCustomSnoozeValue("30") // Reset to default
-    setCustomSnoozeUnit("minutes") // Reset to default
+    setCustomSnoozeValue("30")
+    setCustomSnoozeUnit("minutes")
   }
 
   const handleCustomSnoozeSubmit = async () => {
@@ -180,10 +180,7 @@ export default function RemindersPage() {
     } else if (customSnoozeUnit === "hours") {
       snoozeString = `${value}hr`
     } else {
-      // For days, we'll just send "tomorrow" if 1 day, otherwise a generic "custom"
-      // The backend currently defaults to 2hr if it doesn't recognize the string.
-      // For more precise day-based snoozing, the backend API would need to be extended.
-      snoozeString = value === 1 ? "tomorrow" : "custom" // Backend will default "custom" to 2hr
+      snoozeString = value === 1 ? "tomorrow" : "custom"
       toast({
         title: "Note on Days Snooze",
         description: "Day-based snooze currently defaults to rescheduling 2 hours later if not 'tomorrow'.",
@@ -272,7 +269,7 @@ export default function RemindersPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-600 dark:text-blue-400" />
           <p className="text-gray-600 dark:text-gray-400">Loading reminders...</p>
@@ -286,48 +283,66 @@ export default function RemindersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-slate-900 dark:text-gray-50 relative overflow-x-hidden py-8">
+      <div
+        className="absolute inset-0 z-0 opacity-30 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 10% 20%, rgba(59,130,246,0.05) 0%, transparent 25%), radial-gradient(circle at 90% 80%, rgba(139,92,246,0.03) 0%, transparent 20%)",
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-4 max-w-[1200px]">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2">Medicine Reminders</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Track your medication schedule and mark doses as taken or missed
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">Track your medication schedule and mark doses as taken or missed</p>
         </div>
 
-        <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => setActiveTab("current")}
-            className={`rounded-none border-b-2 ${activeTab === "current" ? "border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"}`}
-          >
-            Current Reminders
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => setActiveTab("history")}
-            className={`rounded-none border-b-2 ${activeTab === "history" ? "border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"}`}
-          >
-            History
-          </Button>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b border-gray-200 dark:border-gray-800 pb-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab("current")}
+              className={`rounded-none border-b-2 ${
+                activeTab === "current" ? "border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
+            >
+              Current Reminders
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab("history")}
+              className={`rounded-none border-b-2 ${
+                activeTab === "history" ? "border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
+            >
+              History
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:block text-xs px-3 py-2 rounded bg-white dark:bg-gray-800 shadow">Logged in as <span className="font-medium ml-2">{session?.user?.email}</span></div>
+            <Button onClick={() => router.push('/dashboard')} variant="outline" className="hidden sm:inline-flex">Upload Prescription</Button>
+            <Button onClick={exportHistory} disabled={history.length === 0} className="inline-flex">
+              <Share2 className="w-4 h-4 mr-2" /> Export
+            </Button>
+          </div>
         </div>
 
         {activeTab === "current" && (
           <div className="grid gap-4">
             {reminders.length === 0 ? (
-              <Card className="dark:bg-gray-800 dark:text-gray-50">
+              <Card className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
                 <CardContent className="text-center py-12">
                   <Clock className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">No Reminders Yet</h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    Upload a prescription to get started with medication reminders
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">Upload a prescription to get started with medication reminders</p>
                   <Button onClick={() => router.push("/dashboard")}>Upload Prescription</Button>
                 </CardContent>
               </Card>
             ) : (
               reminders.map((reminder) => (
-                <Card key={reminder.id} className="dark:bg-gray-800 dark:text-gray-50">
+                <Card key={reminder.id} className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
@@ -344,11 +359,11 @@ export default function RemindersPage() {
                   </CardHeader>
                   {reminder.status === "pending" && (
                     <CardContent className="pt-0">
-                      <div className="flex space-x-2">
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                         <Button
                           size="sm"
                           onClick={() => updateReminderStatus(reminder.id, "taken")}
-                          className="flex-1"
+                          className="flex-1 dark:bg-gray-900 dark:hover:bg-gray-700 bg-blue-600 hover:bg-blue-700 text-white"
                           disabled={updating === reminder.id}
                         >
                           {updating === reminder.id ? (
@@ -375,18 +390,10 @@ export default function RemindersPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="dark:bg-gray-900">
-                            <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "30min")}>
-                              Snooze 30 min
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "1hr")}>
-                              Snooze 1 hour
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "tomorrow")}>
-                              Snooze until tomorrow
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleCustomSnoozeClick(reminder.id)}>
-                              Custom Snooze...
-                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "30min")}>Snooze 30 min</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "1hr")}>Snooze 1 hour</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => updateReminderStatus(reminder.id, "missed", "tomorrow")}>Snooze until tomorrow</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleCustomSnoozeClick(reminder.id)}>Custom Snooze...</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -400,13 +407,8 @@ export default function RemindersPage() {
 
         {activeTab === "history" && (
           <div className="grid gap-4">
-            <div className="flex justify-end mb-4">
-              <Button onClick={exportHistory} disabled={history.length === 0}>
-                <Share2 className="w-4 h-4 mr-2" /> Export History (CSV)
-              </Button>
-            </div>
             {history.length === 0 ? (
-              <Card className="dark:bg-gray-800 dark:text-gray-50">
+              <Card className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
                 <CardContent className="text-center py-12">
                   <History className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-50 mb-2">No History Yet</h3>
@@ -417,7 +419,7 @@ export default function RemindersPage() {
               history
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 .map((entry) => (
-                  <Card key={entry.id} className="dark:bg-gray-800 dark:text-gray-50">
+                  <Card key={entry.id} className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
@@ -426,8 +428,7 @@ export default function RemindersPage() {
                             <CardTitle className="text-lg">{entry.medicine}</CardTitle>
                             <CardDescription>
                               {entry.date} at {entry.time}
-                              {entry.actualTakenTime &&
-                                ` (Taken: ${new Date(entry.actualTakenTime).toLocaleTimeString()})`}
+                              {entry.actualTakenTime && ` (Taken: ${new Date(entry.actualTakenTime).toLocaleTimeString()})`}
                             </CardDescription>
                           </div>
                         </div>

@@ -9,7 +9,7 @@ import { AppToaster } from '@/components/ui/toaster' // Import Toaster
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: 'MedReminder - Smart Prescription Management',
+    title: 'MedRemind - Smart Prescription Management',
     description:
         'Scan prescriptions, get AI-powered parsing, and automatic Google Calendar reminders for your medications.',
 }

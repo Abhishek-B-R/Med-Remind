@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { Upload, Bell, Home, LogOut, Settings, Sun, Moon } from "lucide-react"
+import { Upload, Bell, Home, LogOut, Settings, Sun, Moon, Menu } from "lucide-react"
 import { useTheme } from "next-themes"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
@@ -17,7 +17,7 @@ export function Navigation() {
     { href: "/", label: "Home", icon: Home },
     { href: "/dashboard", label: "Upload", icon: Upload },
     { href: "/reminders", label: "Reminders", icon: Bell },
-    { href: "/settings", label: "Settings", icon: Settings }, // New settings link
+    { href: "/settings", label: "Settings", icon: Settings },
   ]
 
   if (pathname === "/" || pathname === "/auth/signin") {
@@ -30,10 +30,10 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
             <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
-              MedReminder
+              MedRemind
             </Link>
             {session && (
-              <div className="flex space-x-4">
+              <div className="hidden md:flex space-x-4">
                 {navItems.map((item) => {
                   const Icon = item.icon
                   return (
@@ -54,7 +54,42 @@ export function Navigation() {
               </div>
             )}
           </div>
-          <div className="flex items-center space-x-4">
+
+          <div className="flex items-center space-x-2 md:space-x-4">
+            {session && (
+              <div className="md:hidden">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Menu className="h-5 w-5" />
+                      <span className="sr-only">Open menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    {navItems.map((item) => {
+                      const Icon = item.icon
+                      return (
+                        <DropdownMenuItem key={item.href} asChild>
+                          <Link
+                            href={item.href}
+                            className={`flex items-center space-x-2 w-full ${
+                              pathname === item.href
+                                ? "bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
+                                : ""
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                            <span>{item.label}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      )
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+
+            {/* Theme toggle */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -69,12 +104,15 @@ export function Navigation() {
                 <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
             {session && (
               <>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Hello, {session.user?.name}</span>
+                <span className="hidden md:inline text-sm text-gray-600 dark:text-gray-300">
+                  Hello, {session.user?.name}
+                </span>
                 <Button variant="outline" size="sm" onClick={() => signOut()}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
+                  <LogOut className="w-4 h-4 md:mr-2" />
+                  <span className="hidden md:inline">Sign Out</span>
                 </Button>
               </>
             )}

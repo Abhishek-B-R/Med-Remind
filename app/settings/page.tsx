@@ -128,8 +128,11 @@ export default function SettingsPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 animate-spin mx-auto mb-4 text-blue-600 dark:text-blue-400" />
+          <p className="text-gray-600 dark:text-gray-400">Loading preferences...</p>
+        </div>
       </div>
     )
   }
@@ -139,15 +142,23 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-slate-900 dark:text-gray-50 relative overflow-x-hidden py-8">
+      <div
+        className="absolute inset-0 z-0 opacity-30 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 10% 20%, rgba(59,130,246,0.05) 0%, transparent 25%), radial-gradient(circle at 90% 80%, rgba(139,92,246,0.03) 0%, transparent 20%)",
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-4 max-w-[1200px]">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2">Settings</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage your medication preferences and alerts.</p>
+          <h1 className="text-3xl font-extrabold">Settings</h1>
+          <p className="text-sm text-slate-600 dark:text-gray-300">Manage your medication preferences and alerts.</p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-2">
-          <Card className="dark:bg-gray-800 dark:text-gray-50">
+          <Card className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
             <CardHeader>
               <CardTitle>Preferred Reminder Times</CardTitle>
               <CardDescription>Set your ideal times for morning, afternoon, and evening reminders.</CardDescription>
@@ -189,7 +200,7 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          <Card className="dark:bg-gray-800 dark:text-gray-50">
+          <Card className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
             <CardHeader>
               <CardTitle>Allergies</CardTitle>
               <CardDescription>
@@ -197,7 +208,7 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                 <Input
                   placeholder="Add a new allergy (e.g., Penicillin)"
                   value={newAllergy}
@@ -205,34 +216,38 @@ export default function SettingsPage() {
                   onKeyPress={(e) => {
                     if (e.key === "Enter") handleAddAllergy()
                   }}
-                  className="dark:bg-gray-950 dark:border-gray-700"
+                  className="dark:bg-gray-950 dark:border-gray-700 flex-1"
                 />
-                <Button onClick={handleAddAllergy}>Add</Button>
+                <Button onClick={handleAddAllergy} className="mt-2 sm:mt-0">Add</Button>
               </div>
+
               <div className="flex flex-wrap gap-2">
                 {preferences.allergies.map((allergy, index) => (
-                  <Badge key={index} variant="secondary" className="flex items-center gap-1 dark:bg-gray-700">
-                    {allergy}
+                  <Badge key={index} variant="secondary" className="flex items-center gap-2 dark:bg-gray-700">
+                    <span>{allergy}</span>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-4 w-4 dark:hover:bg-gray-600"
+                      className="h-6 w-6 dark:hover:bg-gray-600"
                       onClick={() => handleRemoveAllergy(allergy)}
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                       <span className="sr-only">Remove allergy</span>
                     </Button>
                   </Badge>
                 ))}
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <AlertCircle className="inline-block h-4 w-4 mr-1" />
-                Allergy alerts are a placeholder. Full functionality requires integration with a drug database.
+
+              <div className="text-sm text-slate-600 dark:text-gray-400 flex items-start gap-2">
+                <AlertCircle className="inline-block h-4 w-4 mt-[2px]" />
+                <span>
+                  Allergy alerts are a placeholder. Full functionality requires integration with a drug database.
+                </span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-2 dark:bg-gray-800 dark:text-gray-50">
+          <Card className="lg:col-span-2 dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
             <CardHeader>
               <CardTitle>Drug Interaction Alerts</CardTitle>
               <CardDescription>
@@ -240,17 +255,19 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <AlertCircle className="inline-block h-4 w-4 mr-1" />
-                Drug interaction alerts are a placeholder. Full functionality requires integration with a public drug
-                interaction API (e.g., OpenFDA, RxNorm).
+              <div className="text-sm text-slate-600 dark:text-gray-400 flex items-start gap-2">
+                <AlertCircle className="inline-block h-4 w-4 mt-[2px]" />
+                <span>
+                  Drug interaction alerts are a placeholder. Full functionality requires integration with a public drug
+                  interaction API (e.g., OpenFDA, RxNorm).
+                </span>
               </div>
             </CardContent>
           </Card>
         </div>
 
         <div className="mt-8 text-right">
-          <Button onClick={handleSavePreferences} disabled={saving}>
+          <Button onClick={handleSavePreferences} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white">
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...

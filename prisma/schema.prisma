@@ -57,7 +57,7 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Custom Models for MedReminder App
+// Custom Models for MedRemind App
 model UserPreferences {
   id            String   @id @default(cuid())
   userId        String   @unique
