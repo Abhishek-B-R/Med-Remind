@@ -5,13 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
-interface Medicine {
-  nameOfMedicine: string
-  noOfTablets: number
-  whenToTake: number[] // [morning, afternoon, evening] as 1 or 0
-  notes?: string // New field for side effects/notes
-}
+import Medicine from '@/interfaces/Medicine'
 
 export default function PrescriptionEditor({
   medicines,

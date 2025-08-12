@@ -5,6 +5,7 @@ import './globals.css'
 import { Navigation } from '@/components/navigation'
 import { Providers } from '@/components/providers'
 import { AppToaster } from '@/components/ui/toaster' // Import Toaster
+import { Footer } from '@/components/footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navigation />
           {children}
           <AppToaster />
+          <Footer/>
         </Providers>
       </body>
     </html>

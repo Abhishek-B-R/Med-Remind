@@ -18,17 +18,8 @@ import { motion } from 'framer-motion'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-slate-900 dark:text-gray-50 relative overflow-x-hidden">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-30"
-        aria-hidden
-        style={{
-          background:
-            'radial-gradient(circle at 12% 18%, rgba(59,130,246,0.04) 0%, transparent 20%), radial-gradient(circle at 92% 82%, rgba(139,92,246,0.03) 0%, transparent 18%)',
-        }}
-      />
-
-      <main className="relative z-10 container mx-auto px-6 py-14 max-w-[1200px]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-slate-900 dark:text-gray-50 relative overflow-hidden">
+      <main className="relative z-10 container mx-auto px-6 py-14 max-w-[1400px]">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div>
             <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">Never miss a dose again</h1>
