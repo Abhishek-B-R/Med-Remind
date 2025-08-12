@@ -162,7 +162,7 @@ export default function LandingPage() {
 <section id="crazy-features" className="mt-20 pb-24">
   <h2 className="text-3xl font-bold mb-6">Under the Hood: Engineering Flex</h2>
   <p className="text-slate-600 dark:text-gray-300 mb-8 max-w-3xl">
-    These aren’t just features — they’re the secret sauce that make MedRemind almost impossible to break.
+    These aren’t just features - they’re the secret sauce that make MedRemind almost impossible to break.
   </p>
 
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -170,7 +170,7 @@ export default function LandingPage() {
       {
         icon: <Shield className="w-7 h-7 text-blue-600" />,
         title: 'Bulletproof Privacy',
-        desc: 'Row-level security (RLS) keeps every profile in its own vault — share safely without data leaks.'
+        desc: 'Row-level security (RLS) keeps every profile in its own vault - share safely without data leaks.'
       },
       {
         icon: <Search className="w-7 h-7 text-emerald-600" />,
@@ -190,7 +190,7 @@ export default function LandingPage() {
       {
         icon: <List className="w-7 h-7 text-teal-600" />,
         title: 'Smooth Pagination',
-        desc: 'Shows 10 items at a time and auto-fetches more on scroll — no loading spinners ruining your vibe.'
+        desc: 'Shows 10 items at a time and auto-fetches more on scroll - no loading spinners ruining your vibe.'
       },
       {
         icon: <Accessibility className="w-7 h-7 text-rose-600" />,
