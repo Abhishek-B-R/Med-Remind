@@ -40,11 +40,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (status === 'loading') return
-    if (!session) {
-      router.push('/auth/signin')
-      return
-    }
-
     const fetchPreferences = async () => {
       try {
         const response = await fetch('/api/user-preferences')

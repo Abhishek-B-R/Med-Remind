@@ -1,22 +1,11 @@
 'use client'
 
-import { signIn, getSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar } from 'lucide-react'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function SignInPage() {
-  const router = useRouter()
-
-  useEffect(() => {
-    getSession().then((session) => {
-      if (session) {
-        router.push('/dashboard')
-      }
-    })
-  }, [router])
 
   const handleGoogleSignIn = async () => {
     try {

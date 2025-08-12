@@ -51,10 +51,6 @@ export default function RemindersPage() {
 
   useEffect(() => {
     if (status === 'loading') return
-    if (!session) {
-      router.push('/auth/signin')
-      return
-    }
     fetchReminders()
     fetchHistory()
     // eslint-disable-next-line react-hooks/exhaustive-deps
