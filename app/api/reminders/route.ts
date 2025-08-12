@@ -6,21 +6,20 @@ import GoogleCalendarEvent from '@/interfaces/GoogleCalenderEvent'
 import DbReminder from '@/interfaces/DBReminder'
 import Reminder from '@/interfaces/Reminder'
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id || !session?.accessToken) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    const now = new Date()
-    const timeMin = now.toISOString()
-    const timeMax = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    const { searchParams } = new URL(req.url)
+    const limit = parseInt(searchParams.get('limit') || '20', 10)
+    const offset = parseInt(searchParams.get('offset') || '0', 10)
 
     const response = await fetch(
       `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
-        `timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime&` +
-        `privateExtendedProperty=medicineApp%3Dtrue`,
+        `singleEvents=true&orderBy=startTime&privateExtendedProperty=medicineApp%3Dtrue`,
       {
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
@@ -41,59 +40,54 @@ export async function GET() {
 
     const dbReminders = await prisma.reminder.findMany({
       where: {
-        googleEventId: {
-          in: normalizedEventIds,
-        },
+        googleEventId: { in: normalizedEventIds },
       },
-      include: {
-        medicine: true,
-      },
+      include: { medicine: true },
     })
 
     const remindersMap = new Map(dbReminders.map((r: DbReminder) => [r.googleEventId, r]))
 
-    const allReminders = googleEvents.map((event: GoogleCalendarEvent) => {
+    const allReminders: Reminder[] = googleEvents.map((event: GoogleCalendarEvent) => {
       const normalizedEventId = event.id.split('_')[0]
       const dbReminder = remindersMap.get(normalizedEventId) as DbReminder | undefined
 
-      const medicineName =
-        event.extendedProperties?.private?.medicineName ||
-        event.summary?.replace('Take ', '') ||
-        'Unknown Medicine'
-
-      const notes = event.extendedProperties?.private?.notes || dbReminder?.medicine?.notes || ''
-
       return {
         id: event.id,
-        medicine: medicineName,
-        time: new Date(event.start.dateTime).toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        date: new Date(event.start.dateTime).toLocaleDateString('en-US'),
+        medicine:
+          event.extendedProperties?.private?.medicineName ||
+          event.summary?.replace('Take ', '') ||
+          'Unknown Medicine',
+        time: event.start?.dateTime
+          ? new Date(event.start.dateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+          : '',
+        date: event.start?.dateTime
+          ? new Date(event.start.dateTime).toLocaleDateString('en-US')
+          : '',
         status: dbReminder?.status || 'pending',
-        description: event.description,
-        notes: notes,
+        description: event.description || '',
+        notes:
+          event.extendedProperties?.private?.notes ||
+          dbReminder?.medicine?.notes ||
+          '',
       }
     })
 
     const activeReminders = allReminders.filter(
-      (reminder: Reminder) => reminder.status === 'pending' || reminder.status === 'scheduled'
+      (reminder) => reminder.status === 'pending' || reminder.status === 'scheduled'
     )
 
-    console.log(`Total events: ${allReminders.length}, Active: ${activeReminders.length}`)
-    console.log(
-      'Reminder statuses:',
-      allReminders.map((r: Reminder) => `${r.medicine}: ${r.status}`)
-    )
+    const paginatedReminders = activeReminders.slice(offset, offset + limit)
 
-    return NextResponse.json({ reminders: activeReminders })
+    return NextResponse.json({
+      total: activeReminders.length,
+      limit,
+      offset,
+      reminders: paginatedReminders,
+    })
   } catch (error) {
     console.error('Error fetching reminders:', error)
     return NextResponse.json(
-      {
-        error: (error as Error).message || 'Failed to fetch reminders',
-      },
+      { error: (error as Error).message || 'Failed to fetch reminders' },
       { status: 500 }
     )
   }
