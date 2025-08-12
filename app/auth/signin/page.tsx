@@ -1,31 +1,30 @@
-"use client"
+'use client'
 
-import { signIn, getSession } from "next-auth/react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar } from "lucide-react"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { signIn, getSession } from 'next-auth/react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Calendar } from 'lucide-react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function SignInPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Check if user is already signed in
     getSession().then((session) => {
       if (session) {
-        router.push("/dashboard")
+        router.push('/dashboard')
       }
     })
   }, [router])
 
   const handleGoogleSignIn = async () => {
     try {
-      await signIn("google", {
-        callbackUrl: "/dashboard",
+      await signIn('google', {
+        callbackUrl: '/dashboard',
       })
     } catch (error) {
-      console.error("Sign in error:", error)
+      console.error('Sign in error:', error)
     }
   }
 
@@ -35,7 +34,7 @@ export default function SignInPage() {
         className="absolute inset-0 z-0 opacity-30 pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle at 10% 20%, rgba(59,130,246,0.05) 0%, transparent 25%), radial-gradient(circle at 90% 80%, rgba(139,92,246,0.03) 0%, transparent 20%)",
+            'radial-gradient(circle at 10% 20%, rgba(59,130,246,0.05) 0%, transparent 25%), radial-gradient(circle at 90% 80%, rgba(139,92,246,0.03) 0%, transparent 20%)',
         }}
       />
 
@@ -47,12 +46,17 @@ export default function SignInPage() {
             </div>
             <CardTitle className="text-2xl">Connect Your Calendar</CardTitle>
             <CardDescription className="max-w-xs mx-auto">
-              Sign in with Google to access your calendar and set up medication reminders. We need calendar access to create and manage reminders on your behalf.
+              Sign in with Google to access your calendar and set up medication reminders. We need
+              calendar access to create and manage reminders on your behalf.
             </CardDescription>
           </CardHeader>
 
           <CardContent className="pt-6 pb-8">
-            <Button onClick={handleGoogleSignIn} className="w-full bg-gradient-to-br from-blue-600 to-[#090979] hover:from-blue-700 hover:to-purple-700 text-white" size="lg">
+            <Button
+              onClick={handleGoogleSignIn}
+              className="w-full bg-gradient-to-br from-blue-600 to-[#090979] hover:from-blue-700 hover:to-purple-700 text-white"
+              size="lg"
+            >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" aria-hidden>
                 <path
                   fill="currentColor"
@@ -75,13 +79,18 @@ export default function SignInPage() {
             </Button>
 
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
-              We only access your calendar to create and manage medication reminders. You can revoke access anytime from your Google account.
+              We only access your calendar to create and manage medication reminders. You can revoke
+              access anytime from your Google account.
             </p>
 
             <div className="mt-6 flex items-center justify-center gap-3">
-              <a href="/privacy" className="text-xs text-slate-600 dark:text-gray-300 underline">Privacy</a>
+              <a href="/privacy" className="text-xs text-slate-600 dark:text-gray-300 underline">
+                Privacy
+              </a>
               <span className="text-xs text-slate-400">•</span>
-              <a href="/terms" className="text-xs text-slate-600 dark:text-gray-300 underline">Terms</a>
+              <a href="/terms" className="text-xs text-slate-600 dark:text-gray-300 underline">
+                Terms
+              </a>
             </div>
           </CardContent>
         </Card>

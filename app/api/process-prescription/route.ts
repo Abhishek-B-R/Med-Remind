@@ -1,18 +1,18 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { openai } from "@ai-sdk/openai"
-import { generateObject } from "ai"
-import { z } from "zod"
-import { getServerSession } from "next-auth"
-import { authOptions } from "../auth/[...nextauth]/route"
+import { type NextRequest, NextResponse } from 'next/server'
+import { openai } from '@ai-sdk/openai'
+import { generateObject } from 'ai'
+import { z } from 'zod'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/route'
 
 const medicineSchema = z.object({
   medicines: z.array(
     z.object({
       nameOfMedicine: z.string(),
       noOfTablets: z.number(),
-      whenToTake: z.array(z.number()).length(3), // [morning, afternoon, evening] as 1 or 0
-      notes: z.string().optional(), // Added notes field
-    }),
+      whenToTake: z.array(z.number()).length(3), 
+      notes: z.string().optional(), 
+    })
   ),
 })
 
@@ -20,32 +20,30 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const formData = await request.formData()
-    const image = formData.get("image") as File
-    const ocrText = formData.get("ocrText") as string
+    const image = formData.get('image') as File
+    const ocrText = formData.get('ocrText') as string
 
     if (!image || !ocrText) {
-      return NextResponse.json({ error: "Missing image or OCR text" }, { status: 400 })
+      return NextResponse.json({ error: 'Missing image or OCR text' }, { status: 400 })
     }
 
-    // Convert image to base64 for OpenAI
     const imageBuffer = await image.arrayBuffer()
-    const imageBase64 = Buffer.from(imageBuffer).toString("base64")
+    const imageBase64 = Buffer.from(imageBuffer).toString('base64')
     const imageDataUrl = `data:${image.type};base64,${imageBase64}`
 
-    console.log("Processing with AI...")
-    console.log("OCR Text:", ocrText.substring(0, 200) + "...")
+    console.log('Processing with AI...')
+    console.log('OCR Text:', ocrText.substring(0, 200) + '...')
 
-    // Use OpenAI to parse the prescription
     const result = await generateObject({
-      model: openai("gpt-4o"),
+      model: openai('gpt-4o'),
       schema: medicineSchema,
       messages: [
         {
-          role: "system",
+          role: 'system',
           content: `You are a professional pharmacist with extensive experience reading doctor's handwriting and prescriptions. 
           You will receive both OCR text output and the original prescription image. 
           Parse the prescription and extract medicine information in the specified format.
@@ -69,10 +67,10 @@ export async function POST(request: NextRequest) {
           Also extract any specific notes or side effects mentioned for each medicine.`,
         },
         {
-          role: "user",
+          role: 'user',
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Please analyze this prescription and extract the medicine information. 
               
               OCR Text Output: ${ocrText}
@@ -84,7 +82,7 @@ export async function POST(request: NextRequest) {
               4. Any specific notes or side effects.`,
             },
             {
-              type: "image",
+              type: 'image',
               image: imageDataUrl,
             },
           ],
@@ -92,10 +90,10 @@ export async function POST(request: NextRequest) {
       ],
     })
 
-    console.log("AI Processing completed:", result.object)
+    console.log('AI Processing completed:', result.object)
     return NextResponse.json(result.object)
   } catch (error) {
-    console.error("Error processing prescription:", error)
-    return NextResponse.json({ error: "Failed to process prescription" }, { status: 500 })
+    console.error('Error processing prescription:', error)
+    return NextResponse.json({ error: 'Failed to process prescription' }, { status: 500 })
   }
 }

@@ -10,13 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2, Save, X, AlertCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
-
-interface UserPreferences {
-  morningTime: string
-  afternoonTime: string
-  eveningTime: string
-  allergies: string[]
-}
+import UserPreferences from "@/interfaces/UserPreferences"
 
 export default function SettingsPage() {
   const { data: session, status } = useSession()

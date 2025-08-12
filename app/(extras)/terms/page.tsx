@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, Calendar, Trash2, Lock } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Shield, Calendar, Trash2, Lock } from 'lucide-react'
 
 export default function TermsPage() {
   return (
@@ -7,8 +7,12 @@ export default function TermsPage() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Terms of Service</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300">Last updated: {new Date().toLocaleDateString()}</p>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+              Terms of Service
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300">
+              Last updated: {new Date().toLocaleDateString()}
+            </p>
           </div>
 
           <div className="space-y-8">
@@ -21,8 +25,8 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent className="text-gray-700 dark:text-gray-300 space-y-4">
                 <p>
-                  By accessing and using MedReminder (&quot;the Service&quot;), you accept and agree to be bound by the terms and
-                  provision of this agreement.
+                  By accessing and using MedReminder (&quot;the Service&quot;), you accept and agree
+                  to be bound by the terms and provision of this agreement.
                 </p>
                 <p>If you do not agree to abide by the above, please do not use this service.</p>
               </CardContent>
@@ -36,30 +40,38 @@ export default function TermsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-gray-700 dark:text-gray-300 space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Required Permissions</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Required Permissions
+                </h3>
                 <ul className="list-disc list-inside space-y-2">
                   <li>
-                    <strong>Google Calendar Access:</strong> We request read and write access to your Google Calendar to
-                    create, modify, and delete medication reminder events.
+                    <strong>Google Calendar Access:</strong> We request read and write access to
+                    your Google Calendar to create, modify, and delete medication reminder events.
                   </li>
                   <li>
-                    <strong>Profile Information:</strong> We access your basic Google profile information (name, email)
-                    for account identification and personalization.
+                    <strong>Profile Information:</strong> We access your basic Google profile
+                    information (name, email) for account identification and personalization.
                   </li>
                 </ul>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">How We Use Calendar Access</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">
+                  How We Use Calendar Access
+                </h3>
                 <ul className="list-disc list-inside space-y-2">
-                  <li>Create recurring medication reminder events based on your prescription schedule</li>
+                  <li>
+                    Create recurring medication reminder events based on your prescription schedule
+                  </li>
                   <li>Update event status when you mark doses as taken or missed</li>
                   <li>Reschedule missed doses according to your preferences</li>
                   <li>Delete or modify reminders when you update your medication schedule</li>
                 </ul>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">Calendar Data Usage</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">
+                  Calendar Data Usage
+                </h3>
                 <p>
-                  We only access calendar events created by our application. We do not read, modify, or access any other
-                  calendar events or personal calendar data.
+                  We only access calendar events created by our application. We do not read, modify,
+                  or access any other calendar events or personal calendar data.
                 </p>
               </CardContent>
             </Card>
@@ -77,13 +89,15 @@ export default function TermsPage() {
                     Important: No Image Storage
                   </h3>
                   <p>
-                    <strong>We do NOT store your prescription images.</strong> All uploaded prescription images are
-                    processed immediately using OCR (Optical Character Recognition) and AI analysis, then permanently
-                    deleted from our servers.
+                    <strong>We do NOT store your prescription images.</strong> All uploaded
+                    prescription images are processed immediately using OCR (Optical Character
+                    Recognition) and AI analysis, then permanently deleted from our servers.
                   </p>
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Image Processing Flow</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Image Processing Flow
+                </h3>
                 <ol className="list-decimal list-inside space-y-2">
                   <li>You upload a prescription image</li>
                   <li>Our AI processes the image to extract medication information</li>
@@ -107,7 +121,9 @@ export default function TermsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-gray-700 dark:text-gray-300 space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Acceptable Use</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Acceptable Use
+                </h3>
                 <ul className="list-disc list-inside space-y-2">
                   <li>Use the service only for legitimate medication reminder purposes</li>
                   <li>Provide accurate information when setting up reminders</li>
@@ -115,19 +131,25 @@ export default function TermsPage() {
                   <li>Do not upload non-prescription images or inappropriate content</li>
                 </ul>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">Medical Disclaimer</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">
+                  Medical Disclaimer
+                </h3>
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
                   <p>
-                    <strong>This service is not a substitute for professional medical advice.</strong> Always consult
-                    with your healthcare provider regarding your medications. We are not responsible for any medical
-                    decisions made based on our reminders.
+                    <strong>
+                      This service is not a substitute for professional medical advice.
+                    </strong>{' '}
+                    Always consult with your healthcare provider regarding your medications. We are
+                    not responsible for any medical decisions made based on our reminders.
                   </p>
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">Service Availability</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6">
+                  Service Availability
+                </h3>
                 <p>
-                  We strive to maintain 99% uptime but cannot guarantee uninterrupted service. We are not liable for any
-                  missed medications due to service outages.
+                  We strive to maintain 99% uptime but cannot guarantee uninterrupted service. We
+                  are not liable for any missed medications due to service outages.
                 </p>
               </CardContent>
             </Card>
@@ -138,8 +160,8 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent className="text-gray-700 dark:text-gray-300 space-y-4">
                 <p>
-                  You may terminate your account at any time by signing out and revoking Google Calendar access. Upon
-                  termination:
+                  You may terminate your account at any time by signing out and revoking Google
+                  Calendar access. Upon termination:
                 </p>
                 <ul className="list-disc list-inside space-y-2">
                   <li>All your medication reminders will be deleted from your Google Calendar</li>
@@ -155,8 +177,8 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent className="text-gray-700 dark:text-gray-300">
                 <p>
-                  We reserve the right to modify these terms at any time. Users will be notified of significant changes
-                  via email or through the application interface.
+                  We reserve the right to modify these terms at any time. Users will be notified of
+                  significant changes via email or through the application interface.
                 </p>
               </CardContent>
             </Card>

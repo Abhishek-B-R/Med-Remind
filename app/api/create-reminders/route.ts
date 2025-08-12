@@ -1,27 +1,15 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import prisma from "@/lib/prisma"
-import { authOptions } from "../auth/[...nextauth]/route"
-
-interface MedicineData {
-  nameOfMedicine: string
-  noOfTablets: number
-  whenToTake: number[] // [morning, afternoon, evening] as 1 or 0
-  notes?: string
-}
-
-interface UserPreferences {
-  morningTime: string
-  afternoonTime: string
-  eveningTime: string
-  allergies: string[]
-}
+import { type NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import prisma from '@/lib/prisma'
+import { authOptions } from '../auth/[...nextauth]/route'
+import UserPreferences from '@/interfaces/UserPreferences'
+import MedicineData from '@/interfaces/Medicine'
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id || !session?.accessToken) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { medicines, userPreferences } = (await request.json()) as {
@@ -31,9 +19,9 @@ export async function POST(request: NextRequest) {
     const eventsCreated = []
 
     const defaultPreferences: UserPreferences = {
-      morningTime: "08:00",
-      afternoonTime: "13:00",
-      eveningTime: "20:00",
+      morningTime: '08:00',
+      afternoonTime: '13:00',
+      eveningTime: '20:00',
       allergies: [],
     }
     const effectivePreferences = userPreferences || defaultPreferences
@@ -42,8 +30,8 @@ export async function POST(request: NextRequest) {
     const newPrescription = await prisma.prescription.create({
       data: {
         userId: session.user.id,
-        ocrText: "OCR text will be stored here if passed from client", // Placeholder, ideally passed from client
-        imageUrl: "Image URL will be stored here if uploaded to blob storage", // Placeholder
+        ocrText: 'OCR text will be stored here if passed from client', // Placeholder, ideally passed from client
+        imageUrl: 'Image URL will be stored here if uploaded to blob storage', // Placeholder
       },
     })
 
@@ -62,9 +50,9 @@ export async function POST(request: NextRequest) {
       })
 
       const times = [
-        { time: effectivePreferences.morningTime, label: "Morning" },
-        { time: effectivePreferences.afternoonTime, label: "Afternoon" },
-        { time: effectivePreferences.eveningTime, label: "Evening" },
+        { time: effectivePreferences.morningTime, label: 'Morning' },
+        { time: effectivePreferences.afternoonTime, label: 'Afternoon' },
+        { time: effectivePreferences.eveningTime, label: 'Evening' },
       ]
 
       const dosesPerDay = whenToTake.filter((t) => t === 1).length
@@ -76,10 +64,10 @@ export async function POST(request: NextRequest) {
           const today = new Date()
           const startDate = new Date(today)
           startDate.setHours(
-            Number.parseInt(timeSlot.time.split(":")[0]),
-            Number.parseInt(timeSlot.time.split(":")[1]),
+            Number.parseInt(timeSlot.time.split(':')[0]),
+            Number.parseInt(timeSlot.time.split(':')[1]),
             0,
-            0,
+            0
           )
 
           if (startDate <= today) {
@@ -91,7 +79,11 @@ export async function POST(request: NextRequest) {
 
           const event = {
             summary: `Take ${nameOfMedicine}`,
-            description: `Medication reminder: Take ${nameOfMedicine}\n\nTotal tablets: ${noOfTablets}\nTime: ${timeSlot.label}\nNotes: ${notes || "N/A"}\n\nClick 'Done' when taken or 'Missed' if you missed this dose.`,
+            description: `Medication reminder: Take ${nameOfMedicine}\n\nTotal tablets: ${noOfTablets}\nTime: ${
+              timeSlot.label
+            }\nNotes: ${
+              notes || 'N/A'
+            }\n\nClick 'Done' when taken or 'Missed' if you missed this dose.`,
             start: {
               dateTime: startDate.toISOString(),
               timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -104,30 +96,33 @@ export async function POST(request: NextRequest) {
             reminders: {
               useDefault: false,
               overrides: [
-                { method: "popup", minutes: 10 },
-                { method: "email", minutes: 30 },
+                { method: 'popup', minutes: 10 },
+                { method: 'email', minutes: 30 },
               ],
             },
             extendedProperties: {
               private: {
-                medicineApp: "true",
+                medicineApp: 'true',
                 medicineName: nameOfMedicine,
                 totalTablets: noOfTablets.toString(),
                 timeSlot: timeSlot.label,
-                notes: notes || "",
+                notes: notes || '',
                 medicineId: newMedicine.id, // Link to our internal medicine ID
               },
             },
           }
 
-          const response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(event),
-          })
+          const response = await fetch(
+            'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${session.accessToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(event),
+            }
+          )
 
           if (response.ok) {
             const createdEvent = await response.json()
@@ -139,12 +134,12 @@ export async function POST(request: NextRequest) {
                 medicineId: newMedicine.id,
                 googleEventId: createdEvent.id,
                 scheduledTime: new Date(createdEvent.start.dateTime),
-                status: "pending",
+                status: 'pending',
               },
             })
           } else {
-            console.error("Failed to create event:", await response.text())
-            throw new Error("Failed to create Google Calendar event.")
+            console.error('Failed to create event:', await response.text())
+            throw new Error('Failed to create Google Calendar event.')
           }
         }
       }
@@ -156,7 +151,10 @@ export async function POST(request: NextRequest) {
       events: eventsCreated,
     })
   } catch (error) {
-    console.error("Error creating calendar reminders:", error)
-    return NextResponse.json({ error: (error as Error).message || "Failed to create reminders" }, { status: 500 })
+    console.error('Error creating calendar reminders:', error)
+    return NextResponse.json(
+      { error: (error as Error).message || 'Failed to create reminders' },
+      { status: 500 }
+    )
   }
 }
