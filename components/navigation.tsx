@@ -100,7 +100,7 @@ export function Navigation() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {session && (
+            {session ? (
               <>
                 <span className={`hidden text-sm font-bold text-gray-600 dark:text-gray-300 ${session.user?.name && "md:inline"}`}>
                   Hello, {session.user?.name}
@@ -110,6 +110,12 @@ export function Navigation() {
                   <span className="hidden md:inline">Sign Out</span>
                 </Button>
               </>
+            ) : (
+              <Link href="/auth/signin">
+                <Button variant="default" size="sm" className="bg-gradient-to-br from-blue-600 to-[#090979] text-white h-10">
+                  Sign In
+                </Button>
+              </Link>
             )}
           </div>
         </div>

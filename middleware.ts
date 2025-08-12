@@ -5,25 +5,31 @@ import { NextResponse } from 'next/server'
 
 const publicPaths = ['/', '/terms', '/privacy', '/auth/signin']
 
+function isPublicPath(path: string) {
+  const cleanPath = path === '/' ? '/' : path.replace(/\/$/, '')
+  return publicPaths.includes(cleanPath)
+}
+
 export default withAuth(
   function middleware(req: NextRequestWithAuth) {
     const { pathname } = req.nextUrl
     const token = req.nextauth?.token
+    const cleanPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '')
 
-    const cleanPath = pathname.replace(/\/$/, '')
+    if (isPublicPath(cleanPath)) {
+      return NextResponse.next()
+    }
 
     if (cleanPath === '/auth/signin' && token) {
       return NextResponse.redirect(new URL('/', req.url))
     }
 
-    if (publicPaths.includes(cleanPath)) {
-      return NextResponse.next()
+    if (cleanPath.startsWith('/api') && !token) {
+      return NextResponse.redirect(new URL('/api/auth/unauthorized', req.url))
     }
 
-    const isApiRoute = cleanPath.startsWith('/api')
     if (!token) {
-      const redirectUrl = isApiRoute ? '/api/auth/unauthorized' : '/auth/signin'
-      return NextResponse.redirect(new URL(redirectUrl, req.url))
+      return NextResponse.redirect(new URL('/auth/signin', req.url))
     }
 
     return NextResponse.next()

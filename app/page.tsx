@@ -13,6 +13,12 @@ import {
   Clock,
   Archive,
   Globe,
+  Accessibility,
+  Repeat,
+  Search,
+  Shield,
+  List,
+  Edit3,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -25,8 +31,7 @@ export default function LandingPage() {
             <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">Never miss a dose again</h1>
             <p className="text-lg text-slate-600 dark:text-gray-300 mb-6 max-w-2xl">
               Scan prescriptions, extract medicines with AI, and push smart reminders to your Google
-              Calendar. Rich tracking, allergy checks, drug interaction alerts, and multi profile
-              support make it great for families.
+              Calendar. Rich tracking, allergy checks, drug interaction alerts.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-6">
@@ -44,12 +49,6 @@ export default function LandingPage() {
               <a href="#features" className="self-center ml-2 text-sm text-slate-600 dark:text-gray-300 underline underline-offset-2">
                 See features
               </a>
-            </div>
-
-            <div className="flex gap-4 flex-wrap text-sm">
-              <span className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-full">Demo account available</span>
-              <span className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-full">No credit card required</span>
-              <span className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-full">Works offline for scanning</span>
             </div>
           </div>
 
@@ -157,21 +156,71 @@ export default function LandingPage() {
           <div className="flex gap-4 flex-wrap items-center">
             <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded">MIT License</div>
             <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded">Open source components</div>
-            <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded">SOC 2 ready roadmap</div>
           </div>
         </section>
 
-        <section className="mt-12 pb-24">
-          <h2 className="text-3xl font-bold mb-6">Interview talking points</h2>
-          <ul className="list-disc pl-6 text-slate-700 dark:text-gray-300 space-y-2 max-w-3xl">
-            <li>RLS & row-level security for profile isolation and safe share models</li>
-            <li>OCR pipeline with confidence thresholds, heuristics and manual review flow</li>
-            <li>Idempotent calendar sync — dedupe & retry strategies for event creation</li>
-            <li>Drug interaction caching + throttled alerts to avoid spamming users</li>
-            <li>Multi-profile data modelling in Postgres and efficient calendar aggregation</li>
-            <li>Accessibility improvements for elderly users (larger tap targets and spoken prompts)</li>
-          </ul>
-        </section>
+<section id="crazy-features" className="mt-20 pb-24">
+  <h2 className="text-3xl font-bold mb-6">Under the Hood: Engineering Flex</h2>
+  <p className="text-slate-600 dark:text-gray-300 mb-8 max-w-3xl">
+    These aren’t just features — they’re the secret sauce that make MedRemind almost impossible to break.
+  </p>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[
+      {
+        icon: <Shield className="w-7 h-7 text-blue-600" />,
+        title: 'Bulletproof Privacy',
+        desc: 'Row-level security (RLS) keeps every profile in its own vault — share safely without data leaks.'
+      },
+      {
+        icon: <Search className="w-7 h-7 text-emerald-600" />,
+        title: 'Paranoid OCR',
+        desc: 'Confidence thresholds, custom heuristics, and manual review to handle even the worst handwriting.'
+      },
+      {
+        icon: <Repeat className="w-7 h-7 text-indigo-600" />,
+        title: 'Indestructible Calendar Sync',
+        desc: 'Idempotent event creation with dedupe & retry logic so you never get ghost events or doubles.'
+      },
+      {
+        icon: <Edit3 className="w-7 h-7 text-orange-600" />,
+        title: 'Edit Before You Commit',
+        desc: 'If OCR or LLM parsing flops or the data’s off, tweak it before reminders are set in stone.'
+      },
+      {
+        icon: <List className="w-7 h-7 text-teal-600" />,
+        title: 'Smooth Pagination',
+        desc: 'Shows 10 items at a time and auto-fetches more on scroll — no loading spinners ruining your vibe.'
+      },
+      {
+        icon: <Accessibility className="w-7 h-7 text-rose-600" />,
+        title: 'Elder-Friendly Mode',
+        desc: 'Larger tap targets, spoken prompts, and UI tuned for maximum clarity.'
+      }
+    ].map((f, i) => (
+      <motion.div
+        key={i}
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: i * 0.06 }}
+      >
+        <Card className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              {f.icon}
+              <CardTitle className="mt-1 text-lg">{f.title}</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>{f.desc}</CardDescription>
+          </CardContent>
+        </Card>
+      </motion.div>
+    ))}
+  </div>
+</section>
+
       </main>
 
       <footer className="relative z-10 container mx-auto px-6 py-10">

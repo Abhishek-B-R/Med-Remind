@@ -25,7 +25,7 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent className="text-gray-700 dark:text-gray-300 space-y-4">
                 <p>
-                  By accessing and using MedReminder (&quot;the Service&quot;), you accept and agree
+                  By accessing and using MedRemind (&quot;the Service&quot;), you accept and agree
                   to be bound by the terms and provision of this agreement.
                 </p>
                 <p>If you do not agree to abide by the above, please do not use this service.</p>

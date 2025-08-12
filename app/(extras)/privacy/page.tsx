@@ -344,7 +344,7 @@ export default function PrivacyPage() {
                     us at:
                     <strong className="text-gray-900 dark:text-white">
                       {' '}
-                      privacy@medreminder.com
+                      byteblaster1468@gmail.com
                     </strong>
                   </p>
                 </div>

@@ -8,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              MedReminder
+              MedRemind
             </Link>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
               Never miss your medicine again. Smart prescription scanning with AI-powered Google Calendar integration.
@@ -86,7 +86,7 @@ export function Footer() {
         <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-500 dark:text-gray-500 text-sm">
-              © {new Date().getFullYear()} MedReminder. All rights reserved.
+              © {new Date().getFullYear()} MedRemind. All rights reserved.
             </p>
             <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-500">
               <span>Powered by Next.js & Google Calendar</span>
