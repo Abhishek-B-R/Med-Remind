@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MedRemind
 
-## Getting Started
+MedRemind is a smart medicine reminder web application designed to help users manage their prescriptions and ensure they never miss a dose. It integrates with Google Calendar to automatically set reminders based on prescription data extracted using AI-powered OCR.
 
-First, run the development server:
+## Features
+
+* **AI-powered Prescription Scanner**: Upload a photo of your prescription and let AI extract the medicine names, dosages, and schedules.
+* **Google Calendar Integration**: Automatically create and manage medicine reminders directly in Google Calendar.
+* **Real-time Reminders**: View upcoming reminders with live updates.
+* **Medicine Tracking**: Mark medicines as taken, missed, or snoozed.
+* **History Tracking**: Keep a log of past reminders with details on time taken.
+* **Infinite Scroll**: Smoothly browse through both reminder and history lists.
+* **User Authentication**: Secure sign-in using Google OAuth.
+
+## Tech Stack
+
+* **Frontend**: Next.js, Tailwind CSS, Shadcn UI
+* **Backend**: Next.js API Routes, Prisma ORM
+* **Database**: PostgreSQL
+* **Auth**: NextAuth with Google OAuth
+* **Cloud**: Vercel
+* **AI/OCR**: Image-to-text LLMs for prescription parsing
+
+## Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/medremind.git
+cd medremind
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+bun install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Set up environment variables in `.env`:
 
-## Learn More
+```
+mv .env.example .env
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run database migrations:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+bunx prisma migrate dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. Start the development server:
 
-## Deploy on Vercel
+```bash
+bun run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Sign in with your Google account.
+2. Upload a prescription photo.
+3. Review the extracted medicines and schedule.
+4. Let MedRemind create Google Calendar events.
+5. Track and update your reminders.
+
+## License
+
+This project is licensed under the MIT License.
