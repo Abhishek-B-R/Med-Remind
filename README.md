@@ -37,7 +37,7 @@ bun install
 ```
 
 3. Set up environment variables in `.env`:
-
+### Enter your details in .env.example and then rename as .env (u can do it other way around, doesn't matter)
 ```
 mv .env.example .env
 ```
