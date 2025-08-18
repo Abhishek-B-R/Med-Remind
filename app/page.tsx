@@ -97,10 +97,10 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 items-center">
-                    <Button size="sm" className="px-3 py-1">Add to Calendar</Button>
-                    <Button size="sm" variant="outline" className="px-3 py-1">Snooze</Button>
-                    <Button size="sm" className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white">Mark taken</Button>
+                  <div className="grid grid-cols-6 gap-2">
+                    <Button size="sm" className="px-3 col-span-3 lg:col-span-2 py-1">Add to Calendar</Button>
+                    <Button size="sm" variant="outline" className="px-3 col-span-3 lg:col-span-2 py-1">Snooze</Button>
+                    <Button size="sm" className="px-3 col-span-3 lg:col-span-2 py-1 bg-green-600 hover:bg-green-700 text-white">Mark taken</Button>
                   </div>
                 </div>
 

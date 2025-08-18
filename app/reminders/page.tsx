@@ -338,12 +338,12 @@ export default function RemindersPage() {
                     {reminder.status === 'pending' && (
                       <CardContent className="pt-0">
                         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                          <Button size="sm" onClick={() => updateReminderStatus(reminder.id, 'taken')} className="flex-1 dark:bg-blue-800 dark:hover:bg-blue-700 bg-blue-600 hover:bg-blue-700 text-white" disabled={updating === reminder.id}>
+                          <Button size="default" onClick={() => updateReminderStatus(reminder.id, 'taken')} className="flex-1 dark:bg-blue-800 dark:hover:bg-blue-700 bg-blue-600 hover:bg-blue-700 text-white" disabled={updating === reminder.id}>
                             {updating === reminder.id ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />} Mark as Taken
                           </Button>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button size="sm" variant="outline" className="flex-1 dark:bg-gray-900 dark:hover:bg-gray-700 bg-transparent" disabled={updating === reminder.id}>
+                              <Button size="default" variant="outline" className="flex-1 dark:bg-gray-900 dark:hover:bg-gray-700 bg-transparent" disabled={updating === reminder.id}>
                                 {updating === reminder.id ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <XCircle className="w-4 h-4 mr-2" />} Mark as Missed / Snooze
                               </Button>
                             </DropdownMenuTrigger>
