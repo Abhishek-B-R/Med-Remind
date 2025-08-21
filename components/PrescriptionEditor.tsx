@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Medicine from '@/interfaces/Medicine'
+import { Loader2 } from "lucide-react"
 
 export default function PrescriptionEditor({
   medicines,
@@ -15,6 +16,7 @@ export default function PrescriptionEditor({
   onSave: (medicines: Medicine[]) => void
 }) {
   const [editedMedicines, setEditedMedicines] = useState(medicines)
+  const [isLoading, setIsLoading] = useState(false)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateMedicine = (index: number, field: string, value: any) => {
@@ -138,11 +140,25 @@ export default function PrescriptionEditor({
           Add Medicine
         </Button>
         <Button
-          onClick={() => onSave(editedMedicines)}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-          disabled={editedMedicines.some((med) => !med.nameOfMedicine.trim())}
+          onClick={async () => {
+            setIsLoading(true)
+            try {
+              await onSave(editedMedicines)
+            } finally {
+              setIsLoading(false)
+            }
+          }}
+          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center"
+          disabled={isLoading || editedMedicines.some((med) => !med.nameOfMedicine.trim())}
         >
-          Create Calendar Reminders
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Creating...
+            </span>
+          ) : (
+            "Create Calendar Reminders"
+          )}
         </Button>
       </div>
     </div>
