@@ -134,7 +134,19 @@ export default function Dashboard() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to process prescription with AI.')
+
+        if (response.status === 429) {
+          toast({
+            title: 'Daily Limit Reached',
+            description:
+              errorData.message ||
+              'You can only scan 5 prescriptions per day. Please try again tomorrow.',
+            variant: 'destructive',
+          })
+          return
+        }
+
+        throw new Error(errorData.error || 'Failed to process prescription with AI. Please try again.')
       }
 
       const result = await response.json()
@@ -324,7 +336,7 @@ export default function Dashboard() {
                 >
                   <Upload className="w-8 h-8 mb-2 text-purple-600" />
                   <div className="text-sm">Upload File</div>
-                  <div className="text-xs text-slate-500 mt-1">Supports PNG, JPG and PDFs</div>
+                  <div className="text-xs text-slate-500 mt-1">Supports various image formats</div>
                 </Button>
               </div>
 

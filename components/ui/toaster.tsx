@@ -13,7 +13,7 @@ export function AppToaster() {
     toasts.forEach((t) => {
       // If toast is open, schedule auto-dismiss after its duration
       if (t.open) {
-        const duration = t.duration ?? 3000
+        const duration = t.duration ?? 5000
         const timeoutId = window.setTimeout(() => {
           // set open = false first (so UI can animate)
           dismiss(t.id)

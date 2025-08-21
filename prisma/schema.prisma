@@ -9,7 +9,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NextAuth.js Models
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -47,6 +46,7 @@ model User {
   sessions      Session[]
   preferences   UserPreferences?
   prescriptions Prescription[]
+  scanLogs      ScanLog[]
 }
 
 model VerificationToken {
@@ -110,4 +110,13 @@ model Reminder {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ScanLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }

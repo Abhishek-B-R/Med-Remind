@@ -4,6 +4,7 @@ import { generateObject } from 'ai'
 import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth/[...nextauth]/route'
+import prisma from "@/lib/prisma"
 
 const medicineSchema = z.object({
   medicines: z.array(
@@ -13,7 +14,7 @@ const medicineSchema = z.object({
       whenToTake: z.array(z.number()).length(3), 
       notes: z.string().optional(), 
     })
-  ),
+  ).optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -23,6 +24,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = session.user.id
+
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const scanCount = await prisma.scanLog.count({
+      where: {
+        userId,
+        createdAt: { gte: oneDayAgo }
+      }
+    })
+
+    if (scanCount >= 5) {
+      return NextResponse.json(
+        { 
+          error: 'Rate limit exceeded',
+          message: 'You can only scan 5 prescriptions per day. Please try again later. You can either add those prescription details manually or wait for the next day to scan more prescriptions.'
+        },
+        { status: 429 }
+      )
+    }
+
+    await prisma.scanLog.create({
+      data: { userId }
+    })
+
+    // Get form data
     const formData = await request.formData()
     const image = formData.get('image') as File
     const ocrText = formData.get('ocrText') as string

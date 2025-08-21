@@ -96,7 +96,7 @@ function toast(opts: Omit<ToasterToast, "id">) {
   dispatch({
     type: actionTypes.ADD_TOAST,
     toast: {
-      duration: 3000,
+      duration: 5000,
       ...opts,
       id,
       open: true,
