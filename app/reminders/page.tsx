@@ -89,7 +89,7 @@ export default function RemindersPage() {
       const incoming: Reminder[] = data.reminders || []
       // dedupe
       setReminders((prev) => {
-        const existing = new Set(prev.map((r) => r.id))
+        const existing = new Set(prev?.map((r) => r.id))
         const filtered = incoming.filter((r) => !existing.has(r.id))
         return [...prev, ...filtered]
       })
@@ -119,7 +119,7 @@ export default function RemindersPage() {
 
       const incoming: HistoryEntry[] = data.history || []
       setHistory((prev) => {
-        const existing = new Set(prev.map((h) => h.id))
+        const existing = new Set(prev?.map((h) => h.id))
         const filtered = incoming.filter((h) => !existing.has(h.id))
         return [...prev, ...filtered]
       })
@@ -249,7 +249,7 @@ export default function RemindersPage() {
   }
 
   const exportHistory = () => {
-    const data = history.map((entry) => ({
+    const data = history?.map((entry) => ({
       Medicine: entry.medicine,
       Date: entry.date,
       Time: entry.time,
@@ -259,7 +259,7 @@ export default function RemindersPage() {
     }))
     if (data.length === 0) return toast({ title: 'No History to Export', description: 'There is no medication history available to export.', variant: 'destructive' })
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + Object.keys(data[0]).join(',') + '\n' + data.map((e) => Object.values(e).map((val) => `"${val}"`).join(',')).join('\n')
+    const csvContent = 'data:text/csv;charset=utf-8,' + Object.keys(data[0]).join(',') + '\n' + data?.map((e) => Object.values(e)?.map((val) => `"${val}"`).join(',')).join('\n')
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
@@ -321,7 +321,7 @@ export default function RemindersPage() {
               </Card>
             ) : (
               <>
-                {reminders.map((reminder) => (
+                {reminders?.map((reminder) => (
                   <Card key={reminder.id} className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
@@ -395,7 +395,7 @@ export default function RemindersPage() {
               </Card>
             ) : (
               <>
-                {history.map((entry) => (
+                {history?.map((entry) => (
                   <Card key={entry.id} className="dark:bg-gray-800 dark:text-gray-50 border border-gray-100 dark:border-gray-800">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">

@@ -45,7 +45,7 @@ const reducer = (state: State, action: Action): State => {
     case actionTypes.UPDATE_TOAST:
       return {
         ...state,
-        toasts: state.toasts.map((t) =>
+        toasts: state.toasts?.map((t) =>
           t.id === action.toast.id ? { ...t, ...action.toast } : t
         ),
       }
@@ -54,7 +54,7 @@ const reducer = (state: State, action: Action): State => {
       const { toastId } = action
       return {
         ...state,
-        toasts: state.toasts.map((t) =>
+        toasts: state.toasts?.map((t) =>
           toastId ? (t.id === toastId ? { ...t, open: false } : t) : { ...t, open: false }
         ),
       }
@@ -76,7 +76,7 @@ let memoryState: State = { toasts: [] }
 
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)
-  listeners.forEach((listener) => listener(memoryState))
+  listeners?.forEach((listener) => listener(memoryState))
 }
 
 function genId() {

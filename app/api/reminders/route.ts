@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     const data = await response.json()
     const googleEvents = data.items || []
 
-    const normalizedEventIds = googleEvents.map(
+    const normalizedEventIds = googleEvents?.map(
       (event: GoogleCalendarEvent) => event.id.split('_')[0]
     )
 
@@ -45,9 +45,9 @@ export async function GET(req: Request) {
       include: { medicine: true },
     })
 
-    const remindersMap = new Map(dbReminders.map((r: DbReminder) => [r.googleEventId, r]))
+    const remindersMap = new Map(dbReminders?.map((r: DbReminder) => [r.googleEventId, r]))
 
-    const allReminders: Reminder[] = googleEvents.map((event: GoogleCalendarEvent) => {
+    const allReminders: Reminder[] = googleEvents?.map((event: GoogleCalendarEvent) => {
       const normalizedEventId = event.id.split('_')[0]
       const dbReminder = remindersMap.get(normalizedEventId) as DbReminder | undefined
 

@@ -30,7 +30,7 @@ export function Navigation() {
             </Link>
             {session && (
               <div className="hidden md:flex space-x-4">
-                {navItems.map((item) => {
+                {navItems?.map((item) => {
                   const Icon = item.icon
                   return (
                     <Link
@@ -62,7 +62,7 @@ export function Navigation() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    {navItems.map((item) => {
+                    {navItems?.map((item) => {
                       const Icon = item.icon
                       return (
                         <DropdownMenuItem key={item.href} asChild>

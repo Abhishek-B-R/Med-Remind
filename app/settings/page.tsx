@@ -211,7 +211,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {preferences.allergies.map((allergy, index) => (
+                {preferences.allergies?.map((allergy, index) => (
                   <Badge key={index} variant="secondary" className="flex items-center gap-2 dark:bg-gray-700">
                     <span>{allergy}</span>
                     <Button

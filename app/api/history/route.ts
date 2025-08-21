@@ -43,7 +43,7 @@ export async function GET(req: Request) {
       }),
     ])
 
-    const formattedHistory = historyEntries.map((entry) => ({
+    const formattedHistory = historyEntries?.map((entry) => ({
       id: entry.id,
       medicine: entry.medicine.nameOfMedicine,
       time: new Date(entry.scheduledTime).toLocaleTimeString('en-US', {

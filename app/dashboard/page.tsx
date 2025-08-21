@@ -155,7 +155,7 @@ export default function Dashboard() {
       const allergies = userPreferences?.allergies || []
       const detectedAlerts: string[] = []
 
-      result.medicines.forEach((med: Medicine) => {
+      result.medicines?.forEach((med: Medicine) => {
         if (
           allergies.some((allergy) =>
             med.nameOfMedicine.toLowerCase().includes(allergy.toLowerCase())
@@ -165,13 +165,13 @@ export default function Dashboard() {
         }
       })
 
-      const medNames = result.medicines.map((m: Medicine) => m.nameOfMedicine.toLowerCase())
-      if (medNames.includes('aspirin') && medNames.includes('warfarin')) {
+      const medNames = result.medicines?.map((m: Medicine) => m.nameOfMedicine.toLowerCase())
+      if (medNames?.includes('aspirin') && medNames?.includes('warfarin')) {
         detectedAlerts.push(
           'Potential drug interaction: Aspirin and Warfarin can increase bleeding risk.'
         )
       }
-      if (medNames.includes('ibuprofen') && medNames.includes('lisinopril')) {
+      if (medNames?.includes('ibuprofen') && medNames?.includes('lisinopril')) {
         detectedAlerts.push(
           'Potential drug interaction: Ibuprofen and Lisinopril can affect kidney function.'
         )

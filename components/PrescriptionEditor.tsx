@@ -42,7 +42,7 @@ export default function PrescriptionEditor({
 
   return (
     <div className="space-y-4">
-      {editedMedicines.map((medicine, index) => (
+      {editedMedicines?.map((medicine, index) => (
         <Card key={index} className="p-4 dark:bg-gray-900 dark:border-gray-700">
           <div className="space-y-3">
             <div className="flex justify-between items-center">

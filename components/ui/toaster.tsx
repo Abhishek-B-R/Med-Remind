@@ -10,7 +10,7 @@ export function AppToaster() {
   React.useEffect(() => {
     const timers: number[] = []
 
-    toasts.forEach((t) => {
+    toasts?.forEach((t) => {
       // If toast is open, schedule auto-dismiss after its duration
       if (t.open) {
         const duration = t.duration ?? 5000
@@ -29,14 +29,14 @@ export function AppToaster() {
       }
     })
 
-    return () => timers.forEach((id) => clearTimeout(id))
+    return () => timers?.forEach((id) => clearTimeout(id))
   }, [toasts, dismiss, remove])
 
   if (!toasts || toasts.length === 0) return null
 
   return (
     <div className="fixed right-6 bottom-6 z-[9999] flex flex-col gap-3 pointer-events-none">
-      {toasts.map((t) => (
+      {toasts?.map((t) => (
         <div
           key={t.id}
           role="status"
