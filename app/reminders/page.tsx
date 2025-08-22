@@ -39,6 +39,7 @@ export default function RemindersPage() {
 
   const [reminders, setReminders] = useState<Reminder[]>([])
   const [remindersPage, setRemindersPage] = useState(1)
+  const remindersPageRef = useRef<number>(1)
   const [remindersTotalPages, setRemindersTotalPages] = useState<number | null>(null)
   const [remindersLoading, setRemindersLoading] = useState(false)
   const [remindersHasMore, setRemindersHasMore] = useState(true)
@@ -50,6 +51,8 @@ export default function RemindersPage() {
   const [historyHasMore, setHistoryHasMore] = useState(true)
   const historyLoaderRef = useRef<HTMLDivElement | null>(null)
 
+  const isFetchingRef = useRef(false) // concurrency guard
+
   const [updating, setUpdating] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'current' | 'history'>('current')
 
@@ -58,12 +61,19 @@ export default function RemindersPage() {
   const [customSnoozeValue, setCustomSnoozeValue] = useState('30')
   const [customSnoozeUnit, setCustomSnoozeUnit] = useState<'minutes' | 'hours' | 'days'>('minutes')
 
+  // keep remindersPageRef in sync with state
+  useEffect(() => {
+    remindersPageRef.current = remindersPage
+  }, [remindersPage])
+
   useEffect(() => {
     if (status === 'loading') return
     if (!session) return
 
+    // reset when session / user changes
     setReminders([])
     setRemindersPage(1)
+    remindersPageRef.current = 1
     setRemindersTotalPages(null)
     setRemindersHasMore(true)
 
@@ -71,25 +81,28 @@ export default function RemindersPage() {
     setHistoryOffset(0)
     setHistoryHasMore(true)
 
+    // initial fetch
     fetchRemindersPage(1)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, session])
 
   const fetchRemindersPage = async (page: number) => {
     if (!session) return
-    if (remindersLoading) return
+    if (isFetchingRef.current) return
     if (remindersTotalPages && page > remindersTotalPages) return
 
+    isFetchingRef.current = true
     setRemindersLoading(true)
+
     try {
       const res = await fetch(`/api/reminders?page=${page}&limit=${REMINDERS_LIMIT}`)
       if (!res.ok) throw new Error(await res.text())
       const data = await res.json()
 
       const incoming: Reminder[] = data.reminders || []
-      // dedupe
+      // dedupe and append
       setReminders((prev) => {
-        const existing = new Set(prev?.map((r) => r.id))
+        const existing = new Set(prev.map((r) => r.id))
         const filtered = incoming.filter((r) => !existing.has(r.id))
         return [...prev, ...filtered]
       })
@@ -97,12 +110,18 @@ export default function RemindersPage() {
       const totalPages = typeof data.totalPages === 'number' ? data.totalPages : null
       setRemindersTotalPages(totalPages)
       setRemindersHasMore(totalPages ? page < totalPages : incoming.length === REMINDERS_LIMIT)
-      setRemindersPage(page)
+
+      // update page state and ref (functional-ish)
+      setRemindersPage(() => {
+        remindersPageRef.current = page
+        return page
+      })
     } catch (err) {
       console.error('fetchRemindersPage error', err)
       toast({ title: 'Error', description: 'Could not load reminders.', variant: 'destructive' })
     } finally {
       setRemindersLoading(false)
+      isFetchingRef.current = false
     }
   }
 
@@ -119,7 +138,7 @@ export default function RemindersPage() {
 
       const incoming: HistoryEntry[] = data.history || []
       setHistory((prev) => {
-        const existing = new Set(prev?.map((h) => h.id))
+        const existing = new Set(prev.map((h) => h.id))
         const filtered = incoming.filter((h) => !existing.has(h.id))
         return [...prev, ...filtered]
       })
@@ -141,26 +160,46 @@ export default function RemindersPage() {
     }
   }
 
+  // safer intersection observer for reminders (uses refs, unobserve while fetching)
   useEffect(() => {
     if (activeTab !== 'current') return
     const elem = remindersLoaderRef.current
     if (!elem) return
     if (!remindersHasMore) return
 
-    const obs = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !remindersLoading && remindersHasMore) {
-          fetchRemindersPage(remindersPage + 1)
+    const observer = new IntersectionObserver(
+      async (entries) => {
+        const entry = entries[0]
+        if (!entry?.isIntersecting) return
+        if (isFetchingRef.current) return
+        if (!remindersHasMore) return
+
+        const nextPage = (remindersPageRef.current || 1) + 1
+
+        // temporarily unobserve to avoid repeated triggers while fetching
+        observer.unobserve(elem)
+
+        try {
+          await fetchRemindersPage(nextPage)
+        } finally {
+          // re-observe only if still have more to load and element exists
+          if (remindersLoaderRef.current && remindersHasMore) {
+            observer.observe(remindersLoaderRef.current)
+          }
         }
       },
-      { rootMargin: '200px' }
+      { rootMargin: '200px', threshold: 0.1 }
     )
 
-    obs.observe(elem)
-    return () => obs.disconnect()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, remindersPage, remindersLoading, remindersHasMore])
+    observer.observe(elem)
+    return () => {
+      observer.disconnect()
+    }
+    // we only recreate when activeTab or remindersHasMore changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, remindersHasMore])
 
+  // history observer - keep original behavior (works well)
   useEffect(() => {
     if (activeTab !== 'history') return
     const elem = historyLoaderRef.current
@@ -197,6 +236,7 @@ export default function RemindersPage() {
       const result = await res.json()
       toast({ title: 'Reminder Updated!', description: result.message })
 
+      // remove the reminder locally and refresh history (page 0)
       setReminders((prev) => prev.filter((r) => r.id !== reminderId))
       setHistory([])
       await fetchHistoryPage(0)
@@ -339,12 +379,12 @@ export default function RemindersPage() {
                       <CardContent className="pt-0">
                         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                           <Button size="default" onClick={() => updateReminderStatus(reminder.id, 'taken')} className="flex-1 dark:bg-blue-800 dark:hover:bg-blue-700 bg-blue-600 hover:bg-blue-700 text-white" disabled={updating === reminder.id}>
-                            {updating === reminder.id ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />} Mark as Taken
+                            {updating === reminder.id ? "" : <CheckCircle className="w-4 h-4 mr-2" />} Mark as Taken
                           </Button>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button size="default" variant="outline" className="flex-1 dark:bg-gray-900 dark:hover:bg-gray-700 bg-transparent" disabled={updating === reminder.id}>
-                                {updating === reminder.id ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <XCircle className="w-4 h-4 mr-2" />} Mark as Missed / Snooze
+                                {updating === reminder.id ? "" : <XCircle className="w-4 h-4 mr-2" />} Mark as Missed / Snooze
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="dark:bg-gray-900">
@@ -375,7 +415,7 @@ export default function RemindersPage() {
 
                 {remindersHasMore && !remindersLoading && (
                   <div className="flex justify-center py-4">
-                    <Button variant="outline" onClick={() => fetchRemindersPage(remindersPage + 1)}>Load more</Button>
+                    <Button variant="outline" onClick={() => fetchRemindersPage((remindersPageRef.current || remindersPage) + 1)}>Load more</Button>
                   </div>
                 )}
               </>
