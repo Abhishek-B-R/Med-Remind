@@ -120,6 +120,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result.object)
   } catch (error) {
     console.error('Error processing prescription:', error)
-    return NextResponse.json({ error: 'Failed to process prescription' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to process prescription, please try again by clicking on "Process Prescription with AI" button' }, { status: 500 })
   }
 }
